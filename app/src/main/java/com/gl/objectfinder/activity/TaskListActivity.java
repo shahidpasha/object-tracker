@@ -10,6 +10,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 
 import com.gl.objectfinder.R;
 import com.gl.objectfinder.adapter.TasksListAdapter;
@@ -28,6 +29,9 @@ public class TaskListActivity extends AppCompatActivity implements DetectAsyncTa
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
+
+    //the preview image that is sent to the detect service
+    private ImageView mPreviewImage;
 
     private Context mContext = this;
     View coordinatorView;//reference for showing snack messages
@@ -96,7 +100,8 @@ public class TaskListActivity extends AppCompatActivity implements DetectAsyncTa
         mNoItemsView = findViewById(R.id.tv_no_items);
         coordinatorView = findViewById(R.id.coordinatorview);
         mRecyclerView = (RecyclerView) findViewById(R.id.productslist_recycler_view);
-        //mObjectsList = new ArrayList<>();
+        mPreviewImage = (ImageView)findViewById(R.id.iv_preview);
+
         // use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView
         mRecyclerView.setHasFixedSize(true);
@@ -129,13 +134,15 @@ public class TaskListActivity extends AppCompatActivity implements DetectAsyncTa
     private void getData(){
         Intent intent = getIntent();
         if (intent != null) {
-            mPictureFile = (File)intent.getSerializableExtra(ARGUMENT_PREVIEW_IMAGE);
-            mSnappedBitmap = Utils.readBitmapFromFilePath(mPictureFile);
+            mSnappedBitmap = (Bitmap)intent.getParcelableExtra(ARGUMENT_PREVIEW_IMAGE);
+//            mSnappedBitmap = Utils.readBitmapFromFilePath(mPictureFile);
         }
     }
 
     private void loadData(){
         mProgressView.setVisibility(View.VISIBLE);
+        mPreviewImage.setVisibility(View.VISIBLE);
+        mPreviewImage.setImageBitmap(mSnappedBitmap);
         DetectAsyncTask detectAsyncTask = new DetectAsyncTask(mSnappedBitmap,this);
         detectAsyncTask.execute();
     }
@@ -164,6 +171,7 @@ public class TaskListActivity extends AppCompatActivity implements DetectAsyncTa
     @Override
     public void onDetectSuccessfull(ArrayList<Annotation> annotationArrayList) {
         mProgressView.setVisibility(View.GONE);
+        mPreviewImage.setVisibility(View.GONE);
         Log.v(TAG, "on detection success " + annotationArrayList);
         mObjectsList = annotationArrayList;
         populateData();
@@ -178,6 +186,8 @@ public class TaskListActivity extends AppCompatActivity implements DetectAsyncTa
     @Override
     public void onDetectFailed(String errorResponse) {
         mProgressView.setVisibility(View.GONE);
+        mPreviewImage.setVisibility(View.GONE);
+        mNoItemsView.setVisibility(View.VISIBLE);
         Log.v(TAG, "on detection failure " + errorResponse);
     }
 

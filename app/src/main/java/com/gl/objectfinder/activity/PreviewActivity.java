@@ -13,6 +13,7 @@ import com.gl.objectfinder.asynctask.DetectAsyncTask;
 import com.gl.objectfinder.entity.Annotation;
 import com.gl.objectfinder.utilities.Constants;
 import com.gl.objectfinder.utilities.Utils;
+import com.isseiaoki.simplecropview.CropImageView;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -21,7 +22,7 @@ import java.util.ArrayList;
 public class PreviewActivity extends AppCompatActivity  {
 
     //preview image view
-    private ImageView mPreviewImage;
+    private CropImageView mPreviewImage;
     public static String ARGUMENT_PREVIEW_IMAGE = "preview_image";
     private Bitmap mSnappedBitmap;
     private String TAG = "PreviewActivity";
@@ -43,7 +44,7 @@ public class PreviewActivity extends AppCompatActivity  {
      * initialise the activities
      */
     private void initialise(){
-        mPreviewImage = (ImageView)findViewById(R.id.iv_preview);
+        mPreviewImage = (CropImageView)findViewById(R.id.iv_crop);
         mSnappedBitmap = Utils.readBitmapFromFilePath(mPictureFile);
         mPreviewImage.setImageBitmap(mSnappedBitmap);
         Log.v(TAG, "on pic recieved " + mSnappedBitmap.getWidth() + "x" + mSnappedBitmap.getHeight());
@@ -64,15 +65,21 @@ public class PreviewActivity extends AppCompatActivity  {
     }
 
 
-    public void reTake(View view){
-        finish();
+    public void cropContinue(View view){
+        Bitmap croppedBitmap = mPreviewImage.getCroppedBitmap();
+        moveToDetectScreen(croppedBitmap);
+        Log.v(TAG, "cropped bitmap size " + croppedBitmap.getWidth() + "x" + croppedBitmap.getHeight());
+
     }
 
     public void proceedNext(View view){
-        Intent listIntent = new Intent(PreviewActivity.this,TaskListActivity.class);
-        listIntent.putExtra(TaskListActivity.ARGUMENT_PREVIEW_IMAGE,mPictureFile);
-        startActivity(listIntent);
+        moveToDetectScreen(mSnappedBitmap);
+    }
 
+    private void moveToDetectScreen(Bitmap imageBitmap){
+        Intent listIntent = new Intent(PreviewActivity.this,TaskListActivity.class);
+        listIntent.putExtra(TaskListActivity.ARGUMENT_PREVIEW_IMAGE,imageBitmap);
+        startActivity(listIntent);
     }
 
 

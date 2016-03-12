@@ -18,7 +18,9 @@ package com.gl.objectfinder.activity;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.gl.objectfinder.R;
 import com.gl.objectfinder.fragment.Camera2BasicFragment;
@@ -27,6 +29,9 @@ import com.gl.objectfinder.utilities.Constants;
 import java.io.File;
 
 public class CameraActivity extends Activity implements Camera2BasicFragment.OnPictureTakenCallBack {
+
+    private Uri outputUri;
+    private String TAG = "CameraActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,8 +46,23 @@ public class CameraActivity extends Activity implements Camera2BasicFragment.OnP
 
     @Override
     public void OnPictureTaken(File pictureFile) {
+//        Intent previewIntent = new Intent(CameraActivity.this,PreviewActivity.class);
+//        previewIntent.putExtra(PreviewActivity.ARGUMENT_PREVIEW_IMAGE,pictureFile);
+//        startActivity(previewIntent);
+        gotoPreview(pictureFile);
+
+
+    }
+
+    /**
+     * go to the preview screen
+     */
+
+    private void gotoPreview(File pictureFile){
         Intent previewIntent = new Intent(CameraActivity.this,PreviewActivity.class);
         previewIntent.putExtra(PreviewActivity.ARGUMENT_PREVIEW_IMAGE,pictureFile);
         startActivity(previewIntent);
     }
+
+
 }
