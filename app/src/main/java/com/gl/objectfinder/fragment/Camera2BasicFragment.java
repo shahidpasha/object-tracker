@@ -840,15 +840,16 @@ public class Camera2BasicFragment extends Fragment
                 public void onCaptureCompleted(@NonNull CameraCaptureSession session,
                                                @NonNull CaptureRequest request,
                                                @NonNull TotalCaptureResult result) {
-                    showToast("Saved: " + mFile);
+                    //showToast("Saved: " + mFile);
                     Log.d(TAG, mFile.toString());
                     unlockFocus();
+                    mCallBack.OnPictureTaken(mFile);
+
                 }
             };
 
             mCaptureSession.stopRepeating();
             mCaptureSession.capture(captureBuilder.build(), CaptureCallback, null);
-            mCallBack.OnPictureTaken(mFile);
 
         } catch (CameraAccessException e) {
             e.printStackTrace();

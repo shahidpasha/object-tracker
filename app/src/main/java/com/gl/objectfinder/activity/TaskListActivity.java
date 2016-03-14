@@ -3,6 +3,7 @@ package com.gl.objectfinder.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -134,7 +135,9 @@ public class TaskListActivity extends AppCompatActivity implements DetectAsyncTa
     private void getData(){
         Intent intent = getIntent();
         if (intent != null) {
-            mSnappedBitmap = (Bitmap)intent.getParcelableExtra(ARGUMENT_PREVIEW_IMAGE);
+            byte[] byteArray = intent.getByteArrayExtra(ARGUMENT_PREVIEW_IMAGE);
+            mSnappedBitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
+
 //            mSnappedBitmap = Utils.readBitmapFromFilePath(mPictureFile);
         }
     }

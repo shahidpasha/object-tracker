@@ -15,6 +15,7 @@ import com.gl.objectfinder.utilities.Constants;
 import com.gl.objectfinder.utilities.Utils;
 import com.isseiaoki.simplecropview.CropImageView;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.ArrayList;
 
@@ -67,8 +68,9 @@ public class PreviewActivity extends AppCompatActivity  {
 
     public void cropContinue(View view){
         Bitmap croppedBitmap = mPreviewImage.getCroppedBitmap();
-        moveToDetectScreen(croppedBitmap);
         Log.v(TAG, "cropped bitmap size " + croppedBitmap.getWidth() + "x" + croppedBitmap.getHeight());
+//        mPreviewImage.setImageBitmap(croppedBitmap);
+        moveToDetectScreen(croppedBitmap);
 
     }
 
@@ -77,8 +79,11 @@ public class PreviewActivity extends AppCompatActivity  {
     }
 
     private void moveToDetectScreen(Bitmap imageBitmap){
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        imageBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+        byte[] byteArray = stream.toByteArray();
         Intent listIntent = new Intent(PreviewActivity.this,TaskListActivity.class);
-        listIntent.putExtra(TaskListActivity.ARGUMENT_PREVIEW_IMAGE,imageBitmap);
+        listIntent.putExtra(TaskListActivity.ARGUMENT_PREVIEW_IMAGE, byteArray);
         startActivity(listIntent);
     }
 
