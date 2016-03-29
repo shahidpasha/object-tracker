@@ -14,8 +14,8 @@
 
         ]]>
     </string>
-    <string name="crop_n_continue">Crop and Continue</string>
-    <string name="proceed">Continue without Cropping</string>
+    <string name="crop_n_continue">Crop</string>
+    <string name="proceed">Continue</string>
     <string name="done">done</string>
     <string name="list_tasks_noitem_msg">No Items Detected</string>
     <string name="title_activity_login">Sign in</string>

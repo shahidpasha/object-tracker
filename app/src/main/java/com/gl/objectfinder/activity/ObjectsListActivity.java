@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -17,16 +18,14 @@ import com.gl.objectfinder.R;
 import com.gl.objectfinder.adapter.TasksListAdapter;
 import com.gl.objectfinder.asynctask.DetectAsyncTask;
 import com.gl.objectfinder.entity.Annotation;
-import com.gl.objectfinder.utilities.Utils;
 
 import java.io.File;
 import java.util.ArrayList;
 
 
 
-public class TaskListActivity extends AppCompatActivity implements DetectAsyncTask.DetectCallBack {
+public class ObjectsListActivity extends AppCompatActivity implements DetectAsyncTask.DetectCallBack {
 
-    private ArrayList<Annotation> mObjectsList;
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
@@ -46,7 +45,11 @@ public class TaskListActivity extends AppCompatActivity implements DetectAsyncTa
     private File mPictureFile;
     public static String ARGUMENT_PREVIEW_IMAGE = "preview_image";
     private Bitmap mSnappedBitmap;
-    private String TAG = "TaskListActivity";
+    private String TAG = "ObjectsListActivity";
+    private ArrayList<Bitmap> mBitmapArrayList;
+    private ArrayList<AsyncTask> mTasksList = new ArrayList<>();
+    private ArrayList<Annotation> mObjectsList = new ArrayList<>();
+
 
 
 
@@ -73,6 +76,16 @@ public class TaskListActivity extends AppCompatActivity implements DetectAsyncTa
         gotoHome();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+//        for (AsyncTask asyncTask:mTasksList){
+//            if (!asyncTask.isCancelled()){
+//                asyncTask.cancel(true);
+//            }
+//        }
+    }
+
     private View.OnClickListener navigationClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
@@ -83,7 +96,7 @@ public class TaskListActivity extends AppCompatActivity implements DetectAsyncTa
     };
 
     private void gotoHome(){
-        Intent cameraIntent = new Intent(TaskListActivity.this,CameraActivity.class);
+        Intent cameraIntent = new Intent(ObjectsListActivity.this,CameraActivity.class);
         cameraIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(cameraIntent);
         finish();
@@ -135,9 +148,7 @@ public class TaskListActivity extends AppCompatActivity implements DetectAsyncTa
     private void getData(){
         Intent intent = getIntent();
         if (intent != null) {
-            byte[] byteArray = intent.getByteArrayExtra(ARGUMENT_PREVIEW_IMAGE);
-            mSnappedBitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
-
+            mBitmapArrayList = intent.getParcelableArrayListExtra(ARGUMENT_PREVIEW_IMAGE);
 //            mSnappedBitmap = Utils.readBitmapFromFilePath(mPictureFile);
         }
     }
@@ -146,8 +157,11 @@ public class TaskListActivity extends AppCompatActivity implements DetectAsyncTa
         mProgressView.setVisibility(View.VISIBLE);
         mPreviewImage.setVisibility(View.VISIBLE);
         mPreviewImage.setImageBitmap(mSnappedBitmap);
-        DetectAsyncTask detectAsyncTask = new DetectAsyncTask(mSnappedBitmap,this);
-        detectAsyncTask.execute();
+        for (Bitmap bitmap:mBitmapArrayList) {
+            DetectAsyncTask detectAsyncTask = new DetectAsyncTask(bitmap, this);
+            detectAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            mTasksList.add(detectAsyncTask);
+        }
     }
 
 
@@ -176,7 +190,7 @@ public class TaskListActivity extends AppCompatActivity implements DetectAsyncTa
         mProgressView.setVisibility(View.GONE);
         mPreviewImage.setVisibility(View.GONE);
         Log.v(TAG, "on detection success " + annotationArrayList);
-        mObjectsList = annotationArrayList;
+        mObjectsList.addAll(annotationArrayList);
         populateData();
     }
 

@@ -1,10 +1,13 @@
 package com.gl.objectfinder.utilities;
 
+import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Base64;
 import android.util.Base64InputStream;
 import android.util.Log;
+import android.util.TypedValue;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -46,5 +49,17 @@ public class Utils {
         byte[] byteArray = byteArrayOutputStream.toByteArray();
         String encoded = Base64.encodeToString(byteArray, Base64.DEFAULT);
         return encoded;
+    }
+
+    /**
+     * Converts dp value in pixels
+     * @param context
+     * @param valueInDP
+     * @return
+     */
+    public static int  dpToPixels(Context context,int valueInDP){
+        Resources r = context.getResources();
+        float px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, valueInDP, r.getDisplayMetrics());
+        return (int)px;
     }
 }

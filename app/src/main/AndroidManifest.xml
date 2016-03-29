@@ -27,8 +27,10 @@
             </intent-filter>
         </activity>
         <activity android:name=".activity.PreviewActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:screenOrientation="portrait"
             />
-        <activity android:name=".activity.TaskListActivity"
+        <activity android:name=".activity.ObjectsListActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
             />
