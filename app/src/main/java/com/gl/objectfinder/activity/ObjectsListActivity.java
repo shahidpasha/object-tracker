@@ -46,7 +46,7 @@ public class ObjectsListActivity extends AppCompatActivity implements DetectAsyn
     public static String ARGUMENT_PREVIEW_IMAGE = "preview_image";
     private Bitmap mSnappedBitmap;
     private String TAG = "ObjectsListActivity";
-    private ArrayList<Bitmap> mBitmapArrayList;
+    private ArrayList<String> mBitmapArrayList;
     private ArrayList<AsyncTask> mTasksList = new ArrayList<>();
     private ArrayList<Annotation> mObjectsList = new ArrayList<>();
 
@@ -148,7 +148,7 @@ public class ObjectsListActivity extends AppCompatActivity implements DetectAsyn
     private void getData(){
         Intent intent = getIntent();
         if (intent != null) {
-            mBitmapArrayList = intent.getParcelableArrayListExtra(ARGUMENT_PREVIEW_IMAGE);
+            mBitmapArrayList = intent.getStringArrayListExtra(ARGUMENT_PREVIEW_IMAGE);
 //            mSnappedBitmap = Utils.readBitmapFromFilePath(mPictureFile);
         }
     }
@@ -157,8 +157,8 @@ public class ObjectsListActivity extends AppCompatActivity implements DetectAsyn
         mProgressView.setVisibility(View.VISIBLE);
         mPreviewImage.setVisibility(View.VISIBLE);
         mPreviewImage.setImageBitmap(mSnappedBitmap);
-        for (Bitmap bitmap:mBitmapArrayList) {
-            DetectAsyncTask detectAsyncTask = new DetectAsyncTask(bitmap, this);
+        for (String imagePath:mBitmapArrayList) {
+            DetectAsyncTask detectAsyncTask = new DetectAsyncTask(imagePath, this);
             detectAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             mTasksList.add(detectAsyncTask);
         }

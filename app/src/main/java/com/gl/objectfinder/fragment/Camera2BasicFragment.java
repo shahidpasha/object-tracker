@@ -61,6 +61,7 @@ import android.widget.Toast;
 
 import com.gl.objectfinder.R;
 import com.gl.objectfinder.activity.CameraActivity;
+import com.gl.objectfinder.utilities.ImageSaver;
 import com.gl.objectfinder.views.AutoFitTextureView;
 
 import java.io.File;
@@ -895,18 +896,20 @@ public class Camera2BasicFragment extends Fragment
         }
     }
 
+
     /**
      * Saves a JPEG {@link Image} into the specified {@link File}.
      */
+    /*
     private static class ImageSaver implements Runnable {
 
         /**
          * The JPEG image
-         */
+
         private final Image mImage;
         /**
          * The file we save the image into.
-         */
+
         private final File mFile;
 
         public ImageSaver(Image image, File file) {
@@ -938,6 +941,7 @@ public class Camera2BasicFragment extends Fragment
         }
 
     }
+    */
 
     /**
      * Compares two {@code Size}s based on their areas.

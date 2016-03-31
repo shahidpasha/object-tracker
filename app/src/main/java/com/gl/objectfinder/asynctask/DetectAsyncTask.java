@@ -15,6 +15,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
@@ -47,19 +48,20 @@ public class DetectAsyncTask extends AsyncTask{
     }
 
 
-    private Bitmap bitmap;
+    private String imagePath;
     private String TAG = "EnrollAsyncTask";
     private ArrayList<Annotation> annotationArrayList;
     private DetectCallBack detectCallBack;
     private String responseErrorString;
 
-    public DetectAsyncTask(Bitmap bitmap, DetectCallBack callBack){
-        this.bitmap = bitmap;
+    public DetectAsyncTask(String  imagePath, DetectCallBack callBack){
+        this.imagePath = imagePath;
         this.detectCallBack = callBack;
     }
 
     @Override
     protected Object doInBackground(Object[] params) {
+        Bitmap bitmap = Utils.readBitmapFromFilePath(new File(imagePath));
         String response = RESTClient.performPostCall(Constants.URL_OBJECT_DETECTION, createRequestJSON(bitmap));
         if (response != null){
             annotationArrayList = parseResponse(response);

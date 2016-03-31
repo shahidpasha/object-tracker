@@ -3,6 +3,7 @@ package com.gl.objectfinder.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -11,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.gl.objectfinder.R;
+import com.gl.objectfinder.utilities.BitmapSaver;
 import com.gl.objectfinder.utilities.Utils;
 import com.isseiaoki.simplecropview.CropImageView;
 
@@ -27,9 +29,10 @@ public class PreviewActivity extends AppCompatActivity  {
     private Bitmap mSnappedBitmap;
     private String TAG = "PreviewActivity";
     private File mPictureFile;
-    private ArrayList<Bitmap> mBitmapArrayList = new ArrayList<>();
+    private ArrayList<String> mPictureArrayList = new ArrayList<>();
     private LinearLayout mPreviewLinearLayout;
     private Context mContext = this;
+    private static int cropCount = 0;
 
 
     @Override
@@ -70,8 +73,10 @@ public class PreviewActivity extends AppCompatActivity  {
 
 
     public void cropContinue(View view){
-        Bitmap croppedBitmap = mPreviewImage.getCroppedBitmap();
-        mBitmapArrayList.add(croppedBitmap);
+        Bitmap croppedBitmap = recreateBitmap(mPreviewImage.getCroppedBitmap());
+        File picFile = new File(mContext.getExternalFilesDir(null), "pic"+cropCount+".jpg");
+        new Thread(new BitmapSaver(croppedBitmap,picFile)).start();
+        mPictureArrayList.add(picFile.getAbsolutePath());
         addBitmapToPreview(croppedBitmap);
 
 
@@ -90,20 +95,30 @@ public class PreviewActivity extends AppCompatActivity  {
         previewImageView.setLayoutParams(new LinearLayout.LayoutParams(
                 Utils.dpToPixels(mContext,100),
                 LinearLayout.LayoutParams.MATCH_PARENT));
-        previewImageView.setPadding(10,0,0,0);
+        previewImageView.setPadding(10, 0, 0, 0);
         mPreviewLinearLayout.addView(previewImageView);
     }
 
-    public void proceedNext(View view){
-        moveToDetectScreen(mSnappedBitmap);
+    /**
+     * Hack to avoid an issue with bitmap creation from the cropper
+     * @param bitmap
+     * @return
+     */
+    private Bitmap recreateBitmap(Bitmap bitmap){
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+        byte[] byteArray = stream.toByteArray();
+        Bitmap outBitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
+        return outBitmap;
     }
 
-    private void moveToDetectScreen(Bitmap imageBitmap){
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        imageBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-        byte[] byteArray = stream.toByteArray();
+    public void proceedNext(View view){
+        moveToDetectScreen();
+    }
+
+    private void moveToDetectScreen(){
         Intent listIntent = new Intent(PreviewActivity.this,ObjectsListActivity.class);
-        listIntent.putExtra(ObjectsListActivity.ARGUMENT_PREVIEW_IMAGE, mBitmapArrayList);
+        listIntent.putExtra(ObjectsListActivity.ARGUMENT_PREVIEW_IMAGE, mPictureArrayList);
         startActivity(listIntent);
     }
 
