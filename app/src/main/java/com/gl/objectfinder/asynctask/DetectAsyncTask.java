@@ -67,6 +67,8 @@ public class DetectAsyncTask extends AsyncTask{
             annotationArrayList = parseResponse(response);
         }
         Log.v(TAG,"annotation array list "+annotationArrayList);
+        boolean deletedStatus = Utils.deleteFile(imagePath);
+        Log.v(TAG,"file "+imagePath+" deleted - "+deletedStatus);
        // RESTServices.multipartPost1(null,bitmap);
         return null;
     }

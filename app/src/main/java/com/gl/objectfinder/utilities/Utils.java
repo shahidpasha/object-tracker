@@ -36,6 +36,18 @@ public class Utils {
         return bitmap;
     }
 
+    /**
+     * delete a file from the file path
+     * @param selectedFilePath
+     * @return true if file is deleted , false otherwise
+     */
+
+    public static boolean deleteFile(String selectedFilePath){
+        File file = new File(selectedFilePath);
+        boolean deleted = file.delete();
+        return deleted;
+    }
+
 
     /**
      * converts a bitmap to base64 string

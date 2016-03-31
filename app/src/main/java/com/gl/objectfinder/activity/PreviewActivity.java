@@ -117,6 +117,9 @@ public class PreviewActivity extends AppCompatActivity  {
     }
 
     private void moveToDetectScreen(){
+        if (mPictureArrayList.size() == 0){
+            mPictureArrayList.add(mPictureFile.getAbsolutePath());
+        }
         Intent listIntent = new Intent(PreviewActivity.this,ObjectsListActivity.class);
         listIntent.putExtra(ObjectsListActivity.ARGUMENT_PREVIEW_IMAGE, mPictureArrayList);
         startActivity(listIntent);
