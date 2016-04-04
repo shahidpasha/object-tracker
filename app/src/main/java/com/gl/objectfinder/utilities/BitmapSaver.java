@@ -35,7 +35,7 @@ public class BitmapSaver implements Runnable {
         if (mFile.exists ()) mFile.delete ();
         try {
             FileOutputStream out = new FileOutputStream(mFile);
-            mImageBitmap.compress(Bitmap.CompressFormat.JPEG, 90, out);
+            mImageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
             out.flush();
             out.close();
 
